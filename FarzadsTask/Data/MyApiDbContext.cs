@@ -11,6 +11,7 @@ namespace FarzadsTask.Data
         }
 
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -19,7 +20,7 @@ namespace FarzadsTask.Data
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                     .AddJsonFile("appsettings.json")
                     .Build();
-
+                
                 optionsBuilder.UseSqlServer(configuration.GetConnectionString("MyDatabaseConnection"));
             }
         }
