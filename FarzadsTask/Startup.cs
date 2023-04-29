@@ -31,6 +31,23 @@ namespace FarzadsTask
             //services.AddControllers();
 
 
+            
+
+
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .WithExposedHeaders("Access-Control-Allow-Origin");
+                    });
+            });
+
+
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             services.AddAutoMapper(typeof(Program).Assembly);
@@ -55,6 +72,7 @@ namespace FarzadsTask
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("AllowAllOrigins");
 
             app.UseSwagger();
 
