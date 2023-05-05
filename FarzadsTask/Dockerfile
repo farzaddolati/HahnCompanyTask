@@ -1,25 +1,66 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+# Set the base image to the official .NET 6 SDK image
+FROM mcr.microsoft.com/dotnet/sdk:6.0.408 AS build-env
+
+# Set the working directory
 WORKDIR /app
+
+# Copy the project file and restore dependencies
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy the rest of the application code
+COPY . ./
+
+# Publish the application
+RUN dotnet publish -c Release -o out
+
+# Build the runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.4 AS runtime-env
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the published output from the build environment
+COPY --from=build-env /app/out .
+
+# Set the environment variables for Swagger and HTTPS
+# ENV ASPNETCORE_URLS=https://+:443;http://+:80
+ENV ASPNETCORE_URLS=https://+:44342;http://+:80
+ENV ASPNETCORE_HTTPS_PORT=44342
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=123456
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+
+# Copy the SSL certificate
+COPY aspnetapp.pfx /https/
+
+# Expose the ports for HTTP and HTTPS
+# EXPOSE 80
+# EXPOSE 443
 EXPOSE 80
-EXPOSE 443
+EXPOSE 44342
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["FarzadsTask/FarzadsTask.csproj", "FarzadsTask/"]
-RUN dotnet restore "FarzadsTask/FarzadsTask.csproj"
-COPY . .
-WORKDIR "/src/FarzadsTask"
-RUN dotnet build "FarzadsTask.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "FarzadsTask.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+# Start the application
 ENTRYPOINT ["dotnet", "FarzadsTask.dll"]
+
+
+# docker run -p 80:80 -p 443:443 -e ASPNETCORE_ENVIRONMENT=Production farzadstask:v1
+# docker run -p 80:80 -p 44342:44342 -e ASPNETCORE_ENVIRONMENT=Production farzadstask:v1
+
+# dotnet dev-certs https -ep aspnetapp.pfx -p <your_password>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

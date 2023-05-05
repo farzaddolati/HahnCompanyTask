@@ -30,8 +30,11 @@ namespace FarzadsTask
 
             //services.AddControllers();
 
+            services.AddMvc(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
 
-            
 
 
 

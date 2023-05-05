@@ -57,7 +57,7 @@ namespace FarzadsTask.Controllers
             var customer = _mapper.Map<Customer>(customerDto);
             await _customerRepository.AddAsync(customer);
 
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = customer.Id }, _mapper.Map<CustomerDto>(customer));
+            return CreatedAtAction("AddAsync", new { id = customer.Id }, _mapper.Map<CustomerDto>(customer));
         }
 
         [HttpPut("{id:int}")]
