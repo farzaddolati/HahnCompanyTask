@@ -5,7 +5,7 @@ namespace FarzadsTask.Data
     public class MyApiDbContext : DbContext
     {
         public DbSet<Customer> Customers { get; set; }
-
+        public DbSet<City> Cities { get; set; }
         public MyApiDbContext(DbContextOptions<MyApiDbContext> options) : base(options)
         {
         }
