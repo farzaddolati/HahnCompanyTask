@@ -52,12 +52,14 @@ namespace FarzadsTask
 
 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
 
             services.AddAutoMapper(typeof(Program).Assembly);
 
             services.AddControllers().AddFluentValidation(options =>
             {
                 options.RegisterValidatorsFromAssemblyContaining<CustomerValidator>();
+                options.RegisterValidatorsFromAssemblyContaining<CityValidator>();
             });
 
 

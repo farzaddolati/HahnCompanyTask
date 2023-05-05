@@ -14,15 +14,15 @@ namespace FarzadsTask.Data
         {
             _dbContext = dbContext;
         }
-
+       
         public async Task<Customer> GetByIdAsync(int id)
         {
-            return await _dbContext.Customers.FindAsync(id);
+            return await _dbContext.Customers.Include(c => c.City).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<IEnumerable<Customer>> GetAllAsync()
         {
-            return await _dbContext.Customers.ToListAsync();
+            return await _dbContext.Customers.Include(c => c.City).ToListAsync();
         }
 
         public async Task AddAsync(Customer customer)
@@ -31,11 +31,38 @@ namespace FarzadsTask.Data
             await _dbContext.SaveChangesAsync();
         }
 
+        //public async Task UpdateAsync(Customer customer)
+        //{
+        //    _dbContext.Entry(customer).State = EntityState.Modified;
+        //    await _dbContext.SaveChangesAsync();
+        //}
+
         public async Task UpdateAsync(Customer customer)
         {
-            _dbContext.Entry(customer).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            var existingCustomer = await _dbContext.Customers.Include(c => c.City).FirstOrDefaultAsync(c => c.Id == customer.Id);
+            if (existingCustomer != null)
+            {
+                existingCustomer.FirstName = customer.FirstName;
+                existingCustomer.LastName = customer.LastName;
+                existingCustomer.Email = customer.Email;
+                existingCustomer.PhoneNumber = customer.PhoneNumber;
+                existingCustomer.Address = customer.Address;
+                if (customer.City != null)
+                {
+                    var existingCity = await _dbContext.Cities.FindAsync(customer.City.Id);
+                    if (existingCity != null)
+                    {
+                        existingCustomer.City = existingCity;
+                    }
+                }
+                else
+                {
+                    existingCustomer.City = null;
+                }
+                await _dbContext.SaveChangesAsync();
+            }
         }
+
 
         public async Task DeleteAsync(Customer customer)
         {
