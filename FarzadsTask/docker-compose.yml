@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  hahntask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "44342:44342"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:44342;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44342
+    command: ["dotnet", "FarzadsTask.dll"]
+
+
+
+# version: '3.9'
+# services:
+#   hahntask:
+    
+#     image: farzadstask:v1
+#     ports:
+#       - "80:80"
+#       - "44342:44342"
+#     environment:
+#       - ASPNETCORE_URLS=https://+:44342;http://+:80
+#       - ASPNETCORE_ENVIRONMENT=Production
