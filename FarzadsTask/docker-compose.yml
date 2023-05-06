@@ -15,15 +15,3 @@ services:
     command: ["dotnet", "FarzadsTask.dll"]
 
 
-
-# version: '3.9'
-# services:
-#   hahntask:
-    
-#     image: farzadstask:v1
-#     ports:
-#       - "80:80"
-#       - "44342:44342"
-#     environment:
-#       - ASPNETCORE_URLS=https://+:44342;http://+:80
-#       - ASPNETCORE_ENVIRONMENT=Production
